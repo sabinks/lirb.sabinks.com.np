@@ -25,6 +25,7 @@ jobs:
           /usr/bin/php8.3 artisan view:clear
           /usr/bin/php8.3 artisan route:clear
           /usr/bin/php8.3 artisan migrate
+          /usr/bin/php8.3 artisan test --filter ProductTest
           export NVM_DIR=~/.nvm
           source ~/.nvm/nvm.sh
           nvm use 18.17.0
