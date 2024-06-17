@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Log;
 use Inertia\Testing\AssertableInertia;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Testing\Assert;
 
 class ProductTest extends TestCase
 {
@@ -21,24 +22,24 @@ class ProductTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function test_products_page_contains_no_products()
-    {
-        // Product::create([
-        //     'name' => 'Product One',
-        //     'price' => 100.20
-        // ]);
-        // $response = $this->get('/products');
-        // $response->assertSee("No products");
-        // $response->assertStatus(200);
-        $this->get('/products')
-            ->assertOk()
-            ->assertInertia(
-                fn (AssertableInertia $page) => $page
-                    ->component('Products')
-                    // ->has('products')
-                    ->where('products',  [])
-            );
-    }
+    // public function test_products_page_contains_no_products()
+    // {
+    // Product::create([
+    //     'name' => 'Product One',
+    //     'price' => 100.20
+    // ]);
+    // $response = $this->get('/products');
+    // $response->assertSee("No products");
+    // $response->assertStatus(200);
+    //     $this->get('/products')
+    //         ->assertOk()
+    //         ->assertInertia(
+    //             fn (AssertableInertia $page) => $page
+    //                 ->component('Products')
+    //                 // ->has('products')
+    //                 ->where('products',  [])
+    //         );
+    // }
     public function test_validate_product_form()
     {
         $response = $this->get('/products/create');
@@ -65,6 +66,27 @@ class ProductTest extends TestCase
             ->assertInertia(
                 fn (AssertableInertia $page) => $page
                     ->component('Products')
+            );
+    }
+    public function test_products_exists()
+    {
+        $product1 = Product::create([
+            'name' => 'Product One',
+            'price' => 100.00
+        ]);
+        $product2 = Product::create([
+            'name' => 'Product Two',
+            'price' => 200.00
+        ]);
+        $this->followingRedirects()
+            ->get('/products')
+            ->assertOk()
+            ->assertInertia(
+                fn (AssertableInertia $page) =>
+                $page->component('Products')
+                    ->has('products', 2)
+                    ->has('products.0', fn (AssertableInertia $page) => $page->where('name', 'Product One'))
+                // ->has('products.2', fn (AssertableInertia $page) => $page->where('name', 'Product Two'))
             );
     }
     public function test_show_product()
