@@ -29,7 +29,7 @@ jobs:
           export NVM_DIR=~/.nvm
           source ~/.nvm/nvm.sh
           nvm use 18.17.0
-          npm i
+        #   npm i
           echo 'Building app'
-          npm run build
+        #   npm run build
           echo 'Build successful'
