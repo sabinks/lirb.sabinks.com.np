@@ -24,6 +24,7 @@ jobs:
           /usr/bin/php8.3 artisan config:clear
           /usr/bin/php8.3 artisan view:clear
           /usr/bin/php8.3 artisan route:clear
+          /usr/bin/php8.3 artisan migrate --env=testing
           /usr/bin/php8.3 artisan migrate
           /usr/bin/php8.3 artisan test --filter NewProductTest
           export NVM_DIR=~/.nvm

@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use Tests\TestCase;
 use App\Models\Product;
+use Database\Factories\ProductFactory;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -37,17 +38,28 @@ class NewProductTest extends TestCase
     }
     public function test_product_store_validation_failed(): void
     {
-        $response = $this->postJson(route('product.store', ['']));
+        $product = Product::factory()->make();
+
+        $response = $this->postJson(route('product.store', [
+            // 'name' => $product->name,
+            // 'price' => $product->price
+        ]));
+        $response->assertJsonValidationErrors(['name', 'price']);
         $response->assertUnprocessable();
     }
     public function test_product_store_success(): void
     {
+        $product = Product::factory()->make();
+
         $response = $this->postJson(route('product.store', [
-            'name' => 'Product Three',
-            'price' => 200.00
+            'name' => $product->name,
+            'price' => $product->price
         ]));
         $response->assertCreated();
         $this->assertEquals('Product Stored!', $response->json()['message']);
+        $this->assertDatabaseHas('products', ['name' => 'Product One']);
+        $this->assertDatabaseHas('products', ['name' => 'Product Two']);
+        $this->assertDatabaseHas('products', ['name' => $product->name]);
     }
     public function test_product_not_found(): void
     {
@@ -63,7 +75,18 @@ class NewProductTest extends TestCase
             'product' => $this->product1->id
         ]));
         $response->assertOk();
-        $this->assertEquals($this->product1->name, $response->json()['product']['name']);
+        $this->assertEquals($this->product1->name, $response->json()['name']);
+    }
+    public function test_show_product_exists(): void
+    {
+        $product = Product::factory()->create();
+
+        $response = $this->getJson(route('product.show', [
+            'product' => $product->id
+        ]));
+
+        $response->assertOk();
+        $this->assertEquals($response->json()['name'], $product->name);
     }
     public function test_update_product_success(): void
     {
@@ -72,14 +95,16 @@ class NewProductTest extends TestCase
             'name' => 'Product Three',
             // 'price' => 300.00
         ]));
-        $response->assertOk();
-        $this->assertEquals('Product Three', $response->json()['product']['name']);
+        $response->assertOk()->json();
+        $this->assertDatabaseHas('products', ['id' => $this->product1->id, 'name' => 'Product Three']);
+        $this->assertEquals('Product Three', $response['product']['name']);
     }
     public function test_delete_product_success(): void
     {
-        $response = $this->getJson(route('product.destroy', [
+        $response = $this->deleteJson(route('product.destroy', [
             'product' => $this->product1->id
         ]));
-        $response->assertOk();
+        $response->assertNoContent();
+        $this->assertDatabaseMissing('products', ['id' => $this->product1->id]);
     }
 }

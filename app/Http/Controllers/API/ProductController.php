@@ -45,9 +45,7 @@ class ProductController extends Controller
                 'message' => 'Product not found!',
             ], 404);
         }
-        return response()->json([
-            'product' => $prod
-        ], 200);
+        return response()->json($prod, 200);
     }
 
     /**
@@ -87,9 +85,6 @@ class ProductController extends Controller
             ], 404);
         }
         $prod->delete();
-
-        return response()->json([
-            // 'message' => 'Product deleted!'
-        ], 200);
+        return response('', 204);
     }
 }
