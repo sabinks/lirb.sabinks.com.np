@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use Tests\TestCase;
 use App\Models\Product;
+use App\Models\Review;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -41,12 +42,75 @@ class ReviewTest extends TestCase
     public function test_product_reviews(): void
     {
         // $this->withoutExceptionHandling();
-        $response = $this->getJson(route('reviews.index', [
+        $response = $this->getJson(route('product.reviews.index', [
             'product' => $this->product1->id,
             // 'product' => 0
         ]))->assertOk();
         $this->assertEquals(2, count($response->json()));
         $this->assertEquals('Product One Review One', $response->json()[0]['review']);
         // $response->assertStatus(200);  
+    }
+
+    public function test_review_store_validation_failed_test(): void
+    {
+        $response = $this->postJson(route('product.reviews.store', [
+            'product' => $this->product1->id,
+            'review' => ''
+        ]));
+        $response->assertJsonValidationErrors(['review']);
+        $response->assertUnprocessable();
+    }
+
+    public function test_review_store_sucess(): void
+    {
+        $review = Review::factory()->make();
+        $response = $this->postJson(route('product.reviews.store', [
+            'product' => $this->product1->id,
+            'review' => $review->review
+        ]));
+        $response->assertCreated();
+        $this->assertEquals($response->json()['review'], $review->review);
+        $this->assertDatabaseHas('reviews', ['review' => $review->review]);
+    }
+
+    public function test_show_review(): void
+    {
+        $review = Review::factory()->make();
+        $response = $this->postJson(route('product.reviews.store', [
+            'product' => $this->product1->id,
+            'review' => $review->review
+        ]));
+        $response = $this->getJson(route('reviews.show', $response->json()['id']));
+        $response->assertOk();
+        $this->assertEquals($response->json(['review']), $review->review);
+    }
+
+    public function test_update_review(): void
+    {
+        $review = Review::factory()->make();
+        $response = $this->postJson(route('product.reviews.store', [
+            'product' => $this->product1->id,
+            'review' => $review->review
+        ]));
+        $response = $this->patchJson(route('reviews.update', $response->json()['id']), [
+            'review' => 'Product One Review Five'
+        ]);
+        $response->assertOk();
+        $this->assertDatabaseHas('reviews', ['review' => 'Product One Review Five']);
+    }
+
+    public function test_review_delete(): void
+    {
+        $review = Review::factory()->make();
+        $response = $this->postJson(route('product.reviews.store', [
+            'product' => $this->product1->id,
+            'review' => $review->review
+        ]));
+        $response1 = $this->deleteJson(route('reviews.destroy', [
+            'product' => $this->product1->id,
+            'review' => $response->json()['id']
+        ]));
+        $response1->assertNoContent();
+        $this->assertDatabaseMissing('reviews', ['id' => $response->json()['id']]);
     }
 }

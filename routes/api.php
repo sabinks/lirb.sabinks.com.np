@@ -10,4 +10,4 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::resource('/product', ProductController::class);
-Route::resource('/product/{product}/reviews', ReviewController::class);
+Route::resource('/product.reviews', ReviewController::class)->shallow();

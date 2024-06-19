@@ -59,8 +59,8 @@ class ProductController extends Controller
     }
     public function destroy(Product $product)
     {
+        $product->reviews()->delete();
         $product->delete();
-
         return Inertia::render('Products')->with([
             'status' => 'Product Deleted!'
         ]);

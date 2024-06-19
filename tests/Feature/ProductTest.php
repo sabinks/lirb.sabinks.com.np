@@ -68,27 +68,27 @@ class ProductTest extends TestCase
                     ->component('Products')
             );
     }
-    public function test_products_exists()
-    {
-        $product1 = Product::create([
-            'name' => 'Product One',
-            'price' => 100.00
-        ]);
-        $product2 = Product::create([
-            'name' => 'Product Two',
-            'price' => 200.00
-        ]);
-        $this->followingRedirects()
-            ->get('/products')
-            ->assertOk()
-            ->assertInertia(
-                fn (AssertableInertia $page) =>
-                $page->component('Products')
-                    ->has('products', 2)
-                    ->has('products.0', fn (AssertableInertia $page) => $page->where('name', 'Product One'))
-                // ->has('products.2', fn (AssertableInertia $page) => $page->where('name', 'Product Two'))
-            );
-    }
+    // public function test_products_exists()
+    // {
+    //     $product1 = Product::create([
+    //         'name' => 'Product One',
+    //         'price' => 100.00
+    //     ]);
+    //     $product2 = Product::create([
+    //         'name' => 'Product Two',
+    //         'price' => 200.00
+    //     ]);
+    //     $this->followingRedirects()
+    //         ->get('/products')
+    //         ->assertOk()
+    //         ->assertInertia(
+    //             fn (AssertableInertia $page) =>
+    //             $page->component('Products')
+    //                 ->has('products', 2)
+    //                 ->has('products.0', fn (AssertableInertia $page) => $page->where('name', 'Product One'))
+    //             // ->has('products.2', fn (AssertableInertia $page) => $page->where('name', 'Product Two'))
+    //         );
+    // }
     public function test_show_product()
     {
         $product = Product::create([

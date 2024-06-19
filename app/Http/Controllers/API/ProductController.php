@@ -84,6 +84,7 @@ class ProductController extends Controller
                 'message' => 'Product not found!',
             ], 404);
         }
+        $prod->reviews()->delete();
         $prod->delete();
         return response('', 204);
     }
