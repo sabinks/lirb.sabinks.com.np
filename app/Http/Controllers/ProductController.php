@@ -21,11 +21,13 @@ class ProductController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'price' => 'required'
+            'price' => 'required',
+            'user_id' => 'required|string'
         ]);
         Product::create([
             'name' => $request->name,
-            'price' => $request->price
+            'price' => $request->price,
+            'user_id' => $request->user_id
         ]);
         return redirect('/products');
     }
@@ -57,9 +59,10 @@ class ProductController extends Controller
             'status' => 'Product Updated!'
         ]);
     }
-    public function destroy(Product $product)
+    public function destroy(string $product)
     {
-        $product->reviews()->delete();
+        $product = Product::find($product);
+        // $product->reviews()->delete();
         $product->delete();
         return Inertia::render('Products')->with([
             'status' => 'Product Deleted!'

@@ -71,4 +71,17 @@ class ReviewController extends Controller
 
         return response('', 204);
     }
+
+    public function reviewPublish(string $review, Request $request)
+    {
+        $review = Review::find($review);
+        if (!$review) {
+            return response('Review not found!', 404);
+        }
+        $review->publish = $request->publish;
+
+        $review->update();
+
+        return response($review);
+    }
 }

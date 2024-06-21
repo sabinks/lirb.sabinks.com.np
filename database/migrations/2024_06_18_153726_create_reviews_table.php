@@ -14,8 +14,9 @@ return new class extends Migration
     {
         Schema::create('reviews', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Product::class);
+            $table->foreignId('product_id')->references('id')->on('products')->onDelete('cascade');
             $table->string('review');
+            $table->boolean('publish')->default(false);
             $table->timestamps();
         });
     }

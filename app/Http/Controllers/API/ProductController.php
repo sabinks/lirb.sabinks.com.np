@@ -23,11 +23,14 @@ class ProductController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'price' => 'required'
+            'price' => 'required',
+            'user_id' => 'required|string'
+
         ]);
         Product::create([
             'name' => $request->name,
-            'price' => $request->price
+            'price' => $request->price,
+            'user_id' => $request->user_id
         ]);
         return response()->json([
             'message' => 'Product Stored!',

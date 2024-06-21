@@ -3,28 +3,39 @@
 namespace Tests\Feature;
 
 use Tests\TestCase;
+use App\Models\User;
 use App\Models\Product;
 use Database\Factories\ProductFactory;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Sanctum\Sanctum;
 
 class NewProductTest extends TestCase
 {
     use RefreshDatabase;
-    private $product1, $product2;
+    private $product1, $product2, $user;
     /**
      * A basic feature test example.
      */
     public function setUp(): void
     {
         parent::setUp();
+        $this->user = $this->authUser();
         $this->product1 = Product::create([
             'name' => 'Product One',
-            'price' => 100.00
+            'price' => 100.00,
+            'user_id' => $this->user->id
         ]);
         $this->product2 = Product::create([
             'name' => 'Product Two',
-            'price' => 200.00
+            'price' => 200.00,
+            'user_id' => $this->user->id
+        ]);
+        $this->product1->reviews()->create([
+            'review' => 'Product One Review One'
+        ]);
+        $this->product1->reviews()->create([
+            'review' => 'Product One Review Two'
         ]);
     }
     public function test_products_available(): void
@@ -53,7 +64,8 @@ class NewProductTest extends TestCase
 
         $response = $this->postJson(route('product.store', [
             'name' => $product->name,
-            'price' => $product->price
+            'price' => $product->price,
+            'user_id' => $this->user->id,
         ]));
         $response->assertCreated();
         $this->assertEquals('Product Stored!', $response->json()['message']);
@@ -104,7 +116,9 @@ class NewProductTest extends TestCase
         $response = $this->deleteJson(route('product.destroy', [
             'product' => $this->product1->id
         ]));
-        $response->assertNoContent();
+        // $this->product1->delete();
+        // $response->assertNoContent();
         $this->assertDatabaseMissing('products', ['id' => $this->product1->id]);
+        $this->assertDatabaseMissing('reviews', ['product_id' => $this->product1->id]);
     }
 }

@@ -11,13 +11,15 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 class ReviewTest extends TestCase
 {
     use RefreshDatabase;
-    public $product1, $product2;
+    public $product1, $product2, $user;
     public function setUp(): void
     {
         parent::setUp();
+        $this->user = $this->authUser();
         $this->product1 = Product::create([
             'name' => 'Product One',
-            'price' => 100.00
+            'price' => 100.00,
+            'user_id' => $this->user->id
         ]);
         $this->product1->reviews()->create([
             'review' => 'Product One Review One'
@@ -27,7 +29,8 @@ class ReviewTest extends TestCase
         ]);
         $this->product2 = Product::create([
             'name' => 'Product Two',
-            'price' => 200.00
+            'price' => 200.00,
+            'user_id' => $this->user->id
         ]);
         $this->product2->reviews()->create([
             'review' => 'Product Two Review One'

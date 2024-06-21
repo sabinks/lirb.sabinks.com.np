@@ -16,6 +16,16 @@ class ProductTest extends TestCase
     /**
      * A basic feature test example.
      */
+    use RefreshDatabase;
+    private $user;
+    /**
+     * A basic feature test example.
+     */
+    public function setUp(): void
+    {
+        parent::setUp();
+        $this->user = $this->authUser();
+    }
     public function test_products_page_available(): void
     {
         $response = $this->get('/products');
@@ -60,12 +70,13 @@ class ProductTest extends TestCase
         $this->followingRedirects();
         $this->post('/products', [
             'name' => 'Product One',
-            'price' => 100.20
+            'price' => 100.20,
+            'user_id' => $this->user->id
         ])
             ->assertOk()
             ->assertInertia(
                 fn (AssertableInertia $page) => $page
-                    ->component('Products')
+                    ->component('Product')
             );
     }
     // public function test_products_exists()
@@ -93,7 +104,8 @@ class ProductTest extends TestCase
     {
         $product = Product::create([
             'name' => 'Product One',
-            'price' => 200.20
+            'price' => 200.20,
+            'user_id' => $this->user->id
         ]);
 
         $this->followingRedirects()
@@ -109,7 +121,8 @@ class ProductTest extends TestCase
     {
         $product = Product::create([
             'name' => 'Product One',
-            'price' => 200.20
+            'price' => 200.20,
+            'user_id' => $this->user->id
         ]);
         $this->get('/products/' . $product->id . '/edit');
         $this->followingRedirects();
@@ -127,7 +140,8 @@ class ProductTest extends TestCase
     {
         $product = Product::create([
             'name' => 'Product One',
-            'price' => 200.20
+            'price' => 200.20,
+            'user_id' => $this->user->id
         ]);
         $this->get('/products/' . $product->id . '/edit');
         $this->followingRedirects();
@@ -146,7 +160,8 @@ class ProductTest extends TestCase
     {
         $product = Product::create([
             'name' => 'Product One',
-            'price' => 200.20
+            'price' => 200.20,
+            'user_id' => $this->user->id
         ]);
 
         $this->followingRedirects()

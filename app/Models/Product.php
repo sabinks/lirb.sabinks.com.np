@@ -9,8 +9,15 @@ class Product extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'price'];
+    protected $fillable = ['name', 'price', 'user_id'];
 
+    public static function boot()
+    {
+        parent::boot();
+        self::deleting(function ($product) {
+            // $product->reviews->each->delete();
+        });
+    }
     public function reviews()
     {
         return $this->hasMany(Review::class);

@@ -13,11 +13,18 @@ class ProductUnitTest extends TestCase
     /**
      * A basic unit test example.
      */
+    public $user;
+    public function setUp(): void
+    {
+        parent::setUp();
+        $this->user = $this->authUser();
+    }
     public function test_product_reviews_is_instanace_of(): void
     {
         $product1 = Product::create([
             'name' => 'Product One',
-            'price' => 100.00
+            'price' => 100.00,
+            'user_id' => $this->user->id
         ]);
         $product1->reviews()->create([
             'review' => 'Product One Review One'
@@ -33,7 +40,8 @@ class ProductUnitTest extends TestCase
     {
         $product1 = Product::create([
             'name' => 'Product One',
-            'price' => 100.00
+            'price' => 100.00,
+            'user_id' => $this->user->id
         ]);
         $product1->reviews()->create([
             'review' => 'Product One Review One'

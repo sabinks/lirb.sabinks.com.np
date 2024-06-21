@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,7 +19,10 @@ class ProductFactory extends Factory
     {
         return [
             'name' => fake()->name,
-            'price' => fake()->numberBetween(100, 200)
+            'price' => fake()->numberBetween(100, 200),
+            'user_id' => function () {
+                return User::factory()->create()->id;
+            }
         ];
     }
 }
