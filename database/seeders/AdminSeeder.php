@@ -26,6 +26,16 @@ class AdminSeeder extends Seeder
             $role = Role::whereName('Superadmin')->first();
             $user->assignRole($role);
         }
+        if (!User::whereEmail('admin@mail.com')->first()) {
+            $user = User::create([
+                'name' => 'Admin',
+                'email' => 'admin@mail.com',
+                'password' => Hash::make('pass1234'),
+                'email_verified_at' => Carbon::now(),
+            ]);
+            $role = Role::whereName('Admin')->first();
+            $user->assignRole($role);
+        }
         if (!User::whereEmail('member@mail.com')->first()) {
             $user = User::create([
                 'name' => 'Member',

@@ -32,7 +32,7 @@ export default function ListBox({
                         )}
                         <div className='relative mt-1'>
                             <Listbox.Button
-                                className='relative w-full  cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-sm border border-gray-300  focus:outline-none  sm:text-sm '
+                                className='relative w-full  cursor-default bg-white py-3 pl-3 pr-10 text-left shadow-sm border border-gray-300  focus:outline-none  sm:text-sm '
                                 {...props}
                             >
                                 <span className='block truncate'>
@@ -57,7 +57,7 @@ export default function ListBox({
                                         <Listbox.Option
                                             key={I}
                                             className={({ active }) =>
-                                                `relative cursor-default select-none py-2 pl-10 pr-4 ${active ? "bg-secondary text-white hover:text-white font-bold" : "text-gray-900"
+                                                `relative cursor-pointer select-none py-2 pl-10 pr-4 ${active ? "" : "text-gray-900"
                                                 }`
                                             }
                                             value={person}

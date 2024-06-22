@@ -19,7 +19,7 @@ class RolePermissionController extends Controller
      */
     public function index()
     {
-        $roles = Role::all();
+        $roles = Role::where('name', '!=', 'Superadmin')->get()->toArray();
         $permissions = Permission::orderBy('category_name', 'asc')
             ->orderBy('method_name', 'asc')
             ->get(['id', 'name', 'category_name', 'method_name'])->toArray();

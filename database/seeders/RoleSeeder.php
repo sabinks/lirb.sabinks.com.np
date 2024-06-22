@@ -14,7 +14,7 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
-        $roles = ['Superadmin', 'Member'];
+        $roles = ['Superadmin', 'Admin', 'Member'];
 
         foreach ($roles as $key => $role) {
             if (!Role::whereName($role)->first()) {

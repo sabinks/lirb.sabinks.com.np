@@ -20,7 +20,7 @@ Route::get('/', function () {
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
-Route::get('/role-permissions', [RolePermissionController::class, 'index'])->middleware(('auth:sanctum'));
+Route::get('/role-permissions', [RolePermissionController::class, 'index'])->middleware(('auth:sanctum'))->name('role.permissions');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

@@ -11,7 +11,7 @@ type SelectedRoleType = {
 };
 function RolePermission({ auth, roles, permissions, permissions_categories, role_permissions }: any) {
     const page = usePage()
-    const [rolePer, setRolePer] = useState([])
+    const [rolePer, setRolePer] = useState<any>([])
     const [rolePermissions, setRolePermissions] = useState(false);
     const { get } = useForm()
     const [menu_order, setMenuOrder] = useState<any>(['menu', 'list', 'create', 'show', 'update', 'delete', 'other'])
@@ -20,12 +20,17 @@ function RolePermission({ auth, roles, permissions, permissions_categories, role
         name: "",
     });
     useEffect(() => {
+        if (roles) {
+            setSelectedRole(roles[0]);
+        }
+    }, [roles]);
+    useEffect(() => {
         if (selectedRole?.id != 0) {
-            roleHasPermissions()
+            handleRoleHasPermissions()
         }
     }, [selectedRole]);
-    const roleHasPermissions = async () => {
-        axios.get(`role-has-permissions/${selectedRole.id}`).then((res: any) => setRolePer(res))
+    const handleRoleHasPermissions = async () => {
+        axios.get(`role-has-permissions/${selectedRole.id}`).then((res: any) => setRolePer(res.data))
     }
     const handlePermissionChange = async (e: any, permission_id: number) => {
         const { checked } = e.target;
@@ -35,6 +40,8 @@ function RolePermission({ auth, roles, permissions, permissions_categories, role
             role_id,
             checked
         );
+        const roleHasPermissions = await handleRoleHasPermissions()
+        setRolePer(roleHasPermissions)
     };
     const setPermissionForRole = async (permission_id: number, role_id: number, checked: boolean) => {
         if (checked) {
@@ -52,9 +59,9 @@ function RolePermission({ auth, roles, permissions, permissions_categories, role
     return (
         <AuthenticatedLayout
             user={auth.user}
-            header={<h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Dashboard</h2>}
+            header={<h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Role/Permissions</h2>}
         >
-            <Head title="Dashboard" />
+            <Head title="Role/Permissions" />
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
@@ -97,11 +104,12 @@ function RolePermission({ auth, roles, permissions, permissions_categories, role
                                                                         .map((permission: any, index1: number) => {
                                                                             return (
                                                                                 permission ? <div key={index1} className="w-16 md:w-16 lg:w-24 xl:w-24 2xl:w-36">
+
                                                                                     <input
                                                                                         type='checkbox'
                                                                                         className='h-4 w-4 text-secondary focus:ring-cerulean-300 focus:ring-3 border-gray-300 rounded-xl'
                                                                                         checked={
-                                                                                            rolePer && rolePer.some((x: any) => x.id == permission.id) ? true : false
+                                                                                            rolePer?.length && rolePer?.some((x: any) => x.id == permission.id) ? true : false
                                                                                         }
                                                                                         onChange={(e) => {
                                                                                             setRolePermissions(true);
@@ -113,7 +121,6 @@ function RolePermission({ auth, roles, permissions, permissions_categories, role
                                                                                     </span>
                                                                                 </div>
                                                                                     : <div key={index1} className="w-16 md:w-16 lg:w-24 xl:w-24 2xl:w-36">
-
                                                                                     </div>
                                                                             );
                                                                         })}

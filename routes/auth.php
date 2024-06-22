@@ -33,3 +33,5 @@ Route::middleware('auth')->group(function () {
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 });
 Route::get('role-has-permissions/{role_id}', [RolePermissionController::class, 'roleHasPermissions'])->name('role-permissions');
+Route::post('assign-permission', [RolePermissionController::class, 'assignPermission']);
+Route::post('revoke-permission', [RolePermissionController::class, 'revokePermission']);
