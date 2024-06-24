@@ -15,7 +15,7 @@ class Product extends Model
     {
         parent::boot();
         self::deleting(function ($product) {
-            // $product->reviews->each->delete();
+            $product->reviews->each->delete();
         });
     }
     public function reviews()

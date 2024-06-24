@@ -1,0 +1,34 @@
+type Query {
+    allProducts(
+        orderBy: _ @orderBy(columns: ["created_at", "name", "price"])
+    ): [Product!]! @all
+    paginateProducts(
+        orderBy: _ @orderBy(columnsEnum: "ProductColumn")
+    ): [Product!]! @paginate
+    productByName(name: String! @eq): Product! @find
+    productById(id: Int! @eq): Product @find
+}
+type Mutation {
+    createProduct(
+        name: String! @trim @rules(apply: ["required", "min:5", "max:255"])
+        price: String! @rules(apply: ["required"])
+        user_id: Int @rules(apply: ["required"])
+    ): Product! @create
+    updateProduct(id: ID!, name: String): Product @update
+    deleteProduct(id: ID! @whereKey): Product @delete
+}
+type Product {
+    id: ID!
+    name: String!
+    price: String
+    user_id: Int
+    reviews: [Review!]! @hasMany
+}
+enum ProductColumn {
+    CREATED_AT @enum(value: "created_at")
+    NAME @enum(value: "name")
+}
+type Review {
+    id: ID!
+    review: String!
+}
